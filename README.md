@@ -1,73 +1,105 @@
-# Welcome to your Lovable project
+# Support Portal – A Non-Complex Customer Support System
 
-## Project info
+## Overview
 
-**URL**: https://lovable.dev/projects/65cb4111-992b-4496-9d1e-0a37c7082c66
+This project is a modern, non-complex customer support portal designed to streamline communication and support operations for businesses. Built with **React** and **TypeScript**, it offers distinct functionalities for both customers and admins/consultants. It uses **Google Firebase** for its backend and integrates the **Google Gemini API** for intelligent AI support.
 
-## How can I edit this code?
+Ideal for small to medium-sized businesses, this app is scalable, customizable, and easy to extend for further development.
 
-There are several ways of editing your application.
+---
 
-**Use Lovable**
+## ✨ Features
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/65cb4111-992b-4496-9d1e-0a37c7082c66) and start prompting.
+### 🧑‍💻 Customer Portal
 
-Changes made via Lovable will be committed automatically to this repo.
+- **AI Chat Interface**  
+  Powered by Google Gemini. Automatically suggests tickets and can escalate to human support.  
+  _Implementation: `ChatInterface.tsx`, `ai.ts`_
 
-**Use your preferred IDE**
+- **Support Tickets**  
+  View submitted tickets, auto-redirect to live chat when a consultant joins.  
+  _Implementation: `SupportTickets.tsx`, `TicketDetail.tsx`_
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **Knowledge Base**  
+  Searchable article library with categories, likes, and comments.  
+  _Implementation: `KnowledgeBase.tsx`, `KnowledgeBaseArticle.tsx`_
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+- **Meetings**  
+  View scheduled meetings with date, time, and type (in-person, video, phone).  
+  _Implementation: `Meetings.tsx`, `MeetingDetail.tsx`_
 
-Follow these steps:
+- **Announcements**  
+  See latest updates, interact with important news.  
+  _Implementation: `Announcements.tsx`, `AnnouncementDetail.tsx`_
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+- **Profile Settings**  
+  Manage name, profile picture, and status.  
+  _Implementation: `ProfileSettings.tsx`, `profile.ts`_
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+---
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 🛠️ Admin/Consultant Portal
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+- **Dashboard**  
+  Overview of tickets, meetings, content counts.  
+  _Implementation: `Dashboard.tsx`_
 
-**Edit a file directly in GitHub**
+- **Ticket Management**  
+  Accept/assign tickets and start live chats.  
+  _Implementation: `TicketManagement.tsx`_
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- **Live Chat Interface**  
+  Real-time chat with escalation from AI or ticket view.  
+  _Implementation: `LiveChatInterface.tsx`_
 
-**Use GitHub Codespaces**
+- **Knowledge Base Management**  
+  Add/edit/delete articles, images, and links.  
+  _Implementation: `KnowledgeBaseManagement.tsx`_
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- **Announcement Management**  
+  Publish announcements with importance tags.  
+  _Implementation: `AnnouncementManagement.tsx`_
 
-## What technologies are used for this project?
+- **Task Management**  
+  Internal task tracker for consultants.  
+  _Implementation: `TaskManagement.tsx`_
 
-This project is built with:
+- **Meeting Management**  
+  Manage all scheduled customer meetings.  
+  _Implementation: `MeetingManagement.tsx`_
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Mock Data Population (Dev Only)**  
+  Populate articles and announcements for testing.  
+  _Implementation: `PopulateFirestoreData.tsx`_
 
-## How can I deploy this project?
+- **Create Admin User (Dev Only)**  
+  Setup page for new admin account creation.  
+  _Implementation: `CreateAdminUserPage.tsx`_
 
-Simply open [Lovable](https://lovable.dev/projects/65cb4111-992b-4496-9d1e-0a37c7082c66) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 🧪 Tech Stack
 
-Yes, you can!
+- **Frontend**: React, TypeScript, Vite  
+- **UI**: Shadcn UI (Radix UI + Tailwind CSS)  
+- **Backend**: Google Firebase (Auth, Firestore, Cloud Storage)  
+- **AI**: Google Gemini API  
+- **Routing**: React Router DOM  
+- **State**: React Hooks + Firebase listeners  
+- **Notifications**: Sonner + Shadcn Toast
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+---
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 🚀 Getting Started
+
+### ✅ Prerequisites
+
+- Node.js (LTS recommended)  
+- npm or Yarn  
+- Firebase + Google Cloud account
+
+### 1. Clone the Repo
+
+```bash
+git clone <your-repository-url>
+cd support-portal
