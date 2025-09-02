@@ -103,3 +103,5 @@ Ideal for small to medium-sized businesses, this app is scalable, customizable, 
 ```bash
 git clone <your-repository-url>
 cd support-portal
+
+*Create admin from your firabase/Prefered db
