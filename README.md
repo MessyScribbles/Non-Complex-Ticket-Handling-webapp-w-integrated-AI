@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a modern, non-complex customer support portal designed to streamline communication and support operations for businesses. Built with **React** and **TypeScript**, it offers distinct functionalities for both customers and admins/consultants. It uses **Google Firebase** for its backend and integrates the **Google Gemini API** for intelligent AI support.
+This project is a non-complex customer support portal designed to streamline communication and support operations for businesses. Built with **React** and **TypeScript**, it offers distinct functionalities for both customers and admins/consultants. It uses **Google Firebase** for its backend and integrates the **Google Gemini API** for intelligent AI support.
 
 Ideal for small to medium-sized businesses, this app is scalable, customizable, and easy to extend for further development.
 
