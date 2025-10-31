@@ -8,9 +8,9 @@ Ideal for small to medium-sized businesses, this app is scalable, customizable, 
 
 ---
 
-## ✨ Features
+## Features
 
-### 🧑‍💻 Customer Portal
+### Customer Portal
 
 - **AI Chat Interface**  
   Powered by Google Gemini. Automatically suggests tickets and can escalate to human support.  
@@ -38,7 +38,7 @@ Ideal for small to medium-sized businesses, this app is scalable, customizable, 
 
 ---
 
-### 🛠️ Admin/Consultant Portal
+### Admin/Consultant Portal
 
 - **Dashboard**  
   Overview of tickets, meetings, content counts.  
@@ -78,7 +78,7 @@ Ideal for small to medium-sized businesses, this app is scalable, customizable, 
 
 ---
 
-## 🧪 Tech Stack
+## Tech Stack
 
 - **Frontend**: React, TypeScript, Vite  
 - **UI**: Shadcn UI (Radix UI + Tailwind CSS)  
@@ -90,9 +90,9 @@ Ideal for small to medium-sized businesses, this app is scalable, customizable, 
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### ✅ Prerequisites
+### Prerequisites
 
 - Node.js (LTS recommended)  
 - npm or Yarn  
