@@ -1,4 +1,4 @@
-# Support Portal – A Non-Complex Customer Support System
+# Customer-Service-Portal-with an integrated AI Chatbot
 
 ## Overview
 
