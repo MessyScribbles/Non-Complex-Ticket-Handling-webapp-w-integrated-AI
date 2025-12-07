@@ -1,107 +1,178 @@
-# Customer-Service-Portal-with an integrated AI Chatbot
+# **AI-Assisted Support Platform**
 
-## Overview
-
-This project is a non-complex customer support portal designed to streamline communication and support operations for businesses. Built with **React** and **TypeScript**, it offers distinct functionalities for both customers and admins/consultants. It uses **Google Firebase** for its backend and integrates the **Google Gemini API** for intelligent AI support.
-
-Ideal for small to medium-sized businesses, this app is scalable, customizable, and easy to extend for further development.
+ customer-support portal combining real-time communication, multi-role workflows, and integrated GenAI assistance.
 
 ---
 
-## Features
+## **Motivation**
 
-### Customer Portal
+This platform was built to apply my knowledge of client–server architecture, serverless systems, and AI integration within a practical business context.
 
-- **AI Chat Interface**  
-  Powered by Google Gemini. Automatically suggests tickets and can escalate to human support.  
-  _Implementation: `ChatInterface.tsx`, `ai.ts`_
+It serves as a complete case study demonstrating:
 
-- **Support Tickets**  
-  View submitted tickets, auto-redirect to live chat when a consultant joins.  
-  _Implementation: `SupportTickets.tsx`, `TicketDetail.tsx`_
+* Real-time communication using cloud infrastructure
+* A dual-portal system for customers and consultants
+* Practical usage of LLMs (Google Gemini) in customer support workflows
 
-- **Knowledge Base**  
-  Searchable article library with categories, likes, and comments.  
-  _Implementation: `KnowledgeBase.tsx`, `KnowledgeBaseArticle.tsx`_
-
-- **Meetings**  
-  View scheduled meetings with date, time, and type (in-person, video, phone).  
-  _Implementation: `Meetings.tsx`, `MeetingDetail.tsx`_
-
-- **Announcements**  
-  See latest updates, interact with important news.  
-  _Implementation: `Announcements.tsx`, `AnnouncementDetail.tsx`_
-
-- **Profile Settings**  
-  Manage name, profile picture, and status.  
-  _Implementation: `ProfileSettings.tsx`, `profile.ts`_
+The goal: **optimize support processes** by routing user queries from an intelligent AI chatbot to human consultants only when necessary—reducing workload, speeding resolution times, and improving user experience and to also decrease data loss and fragmentation within the company i interned in.
 
 ---
 
-### Admin/Consultant Portal
+##  **Project Overview**
 
-- **Dashboard**  
-  Overview of tickets, meetings, content counts.  
-  _Implementation: `Dashboard.tsx`_
+A support solution featuring **two dedicated portals**:
 
-- **Ticket Management**  
-  Accept/assign tickets and start live chats.  
-  _Implementation: `TicketManagement.tsx`_
+* **Customer Portal:** AI chat, ticketing, knowledge base, and live chat
+* **Admin/Consultant Portal:** Ticket management, dashboards, content tools, meetings, and tasks
 
-- **Live Chat Interface**  
-  Real-time chat with escalation from AI or ticket view.  
-  _Implementation: `LiveChatInterface.tsx`_
+### **Tech Architecture**
 
-- **Knowledge Base Management**  
-  Add/edit/delete articles, images, and links.  
-  _Implementation: `KnowledgeBaseManagement.tsx`_
-
-- **Announcement Management**  
-  Publish announcements with importance tags.  
-  _Implementation: `AnnouncementManagement.tsx`_
-
-- **Task Management**  
-  Internal task tracker for consultants.  
-  _Implementation: `TaskManagement.tsx`_
-
-- **Meeting Management**  
-  Manage all scheduled customer meetings.  
-  _Implementation: `MeetingManagement.tsx`_
-
-- **Mock Data Population (Dev Only)**  
-  Populate articles and announcements for testing.  
-  _Implementation: `PopulateFirestoreData.tsx`_
-
-- **Create Admin User (Dev Only)**  
-  Setup page for new admin account creation.  
-  _Implementation: `CreateAdminUserPage.tsx`_
+* **Frontend:** React + TypeScript, Vite
+* **UI:** Tailwind CSS, Shadcn UI (Radix UI primitives)
+* **Backend:** Firebase (Auth, Firestore, Storage)
+* **AI Layer:** Google Gemini (gemini-2.5-flash)
+* **Routing:** React Router DOM
 
 ---
 
-## Tech Stack
-
-- **Frontend**: React, TypeScript, Vite  
-- **UI**: Shadcn UI (Radix UI + Tailwind CSS)  
-- **Backend**: Google Firebase (Auth, Firestore, Cloud Storage)  
-- **AI**: Google Gemini API  
-- **Routing**: React Router DOM  
-- **State**: React Hooks + Firebase listeners  
-- **Notifications**: Sonner + Shadcn Toast
+## **Key Features**
 
 ---
 
-## Getting Started
+### **I. Customer Portal**
 
-### Prerequisites
+Self-service, AI assistance, and escalation workflows.
 
-- Node.js (LTS recommended)  
-- npm or Yarn  
-- Firebase + Google Cloud account
+| Feature                         | Description                                                                                             | Implementation                                  |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| **AI Chat Interface**           | Gemini-powered assistant suggesting knowledge articles and drafting tickets when needed.                | `ChatInterface.tsx`, `ai.ts`                    |
+| **Support Tickets**             | View/create tickets (pending → in-progress → resolved). Redirects to live chat when consultant accepts. | `SupportTickets.tsx`, `TicketDetail.tsx`        |
+| **Alias Base (Knowledge Base)** | Searchable articles with categories, likes, comments, and solution previews.                            | `KnowledgeBase.tsx`, `KnowledgeBaseArticle.tsx` |
+| **Live Chat Interface**         | Real-time messaging with consultants after escalation. Includes "Close Chat" action.                    | `LiveChatInterface.tsx`                         |
+| **Profile Settings**            | Manage name, picture, and online status.                                                                | `ProfileSettings.tsx`, `profile.ts`             |
 
-### 1. Clone the Repo
+---
+
+### **II. Admin / Consultant Portal**
+
+Full operational control and management tools.
+
+| Feature                | Description                                                                         | Implementation                                              |
+| ---------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Dashboard**          | KPI overview: real-time counts of tickets, meetings, content, etc.                  | `Dashboard.tsx`                                             |
+| **Ticket Management**  | Accept, prioritize, and handle customer tickets. Includes “Accept & Chat” workflow. | `TicketManagement.tsx`                                      |
+| **Content Management** | Create/edit/publish knowledge base articles and announcements.                      | `KnowledgeBaseManagement.tsx`, `AnnouncementManagement.tsx` |
+| **Task Management**    | Internal task tracker for consultants.                                              | `TaskManagement.tsx`                                        |
+| **Meeting Management** | Schedule and track customer meetings.                                               | `MeetingManagement.tsx`                                     |
+
+---
+
+## 🛠️ **Tech Stack**
+
+**Frontend**
+
+* React
+* TypeScript
+* Vite
+
+**UI Frameworks**
+
+* Tailwind CSS
+* Shadcn UI (Radix UI)
+
+**Backend & Cloud Services**
+
+* Firebase Authentication
+* Firestore Database
+* Firebase Storage
+
+**AI Layer**
+
+* Google Gemini API (gemini-2.5-flash)
+
+**Routing**
+
+* React Router DOM
+
+---
+
+## **Getting Started**
+
+### **Prerequisites**
+
+Ensure the following are installed/set up:
+
+* Node.js (LTS)
+* npm or Yarn
+* Firebase project (Firestore + Auth + Storage enabled)
+* Gemini API key
+
+---
+
+### **1. Clone the Repository**
 
 ```bash
 git clone <your-repository-url>
-cd support-portal
+cd <your-repository-name>
+```
 
-*Create admin from your firabase/Prefered db
+### **2. Install Dependencies**
+
+```bash
+npm install
+# or
+yarn install
+```
+
+### **3. Configure Environment Variables**
+
+Create a `.env` file:
+
+```dotenv
+VITE_FIREBASE_API_KEY="YOUR_FIREBASE_API_KEY"
+VITE_FIREBASE_AUTH_DOMAIN="YOUR_PROJECT_ID.firebaseapp.com"
+VITE_FIREBASE_PROJECT_ID="YOUR_PROJECT_ID"
+VITE_FIREBASE_STORAGE_BUCKET="YOUR_PROJECT_ID.appspot.com"
+VITE_FIREBASE_MESSAGING_SENDER_ID="SENDER_ID"
+VITE_FIREBASE_APP_ID="APP_ID"
+
+# Gemini AI Key
+VITE_GEMINI_API_KEY="INSERT_YOUR_GEMINI_API_KEY_HERE"
+```
+
+---
+
+### **4. Start the Development Server**
+
+```bash
+npm run dev
+# or
+yarn dev
+```
+### ***For testing purposes: incase you wanna try the app without setting up proper firebase rules use the following as your firebase rules***
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}
+
+However be careful as this will allow bypassing all permissions , this is only for testing purposes.
+---
+
+### **5. Create the Initial Admin User**
+
+Open the following development-only endpoint:
+
+```
+http://localhost:5173/create-admin
+or create one from your firebase
+```
+
+Use it to register your **first consultant/admin** account.
+
+---
+
+I hope this may be of use to someone.
