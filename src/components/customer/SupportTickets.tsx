@@ -31,9 +31,10 @@ interface Ticket {
 
 interface SupportTicketsProps {
   onNavigateToView: (view: string) => void;
+  MenuButton: React.ReactElement; // ADDED INTERFACE
 }
 
-const SupportTickets = ({ onNavigateToView }: SupportTicketsProps) => {
+const SupportTickets = ({ onNavigateToView, MenuButton }: SupportTicketsProps) => { // MODIFIED SIGNATURE
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -164,11 +165,13 @@ const SupportTickets = ({ onNavigateToView }: SupportTicketsProps) => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="border-b border-border p-6">
-        <div className="flex justify-between items-center">
+      {/* Blue Header with Menu Button */}
+      <div className="p-6 border-b border-border bg-primary"> {/* MODIFIED */}
+        <div className="flex items-center justify-start gap-4"> {/* MODIFIED */}
+          {MenuButton} {/* ADDED */}
           <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">Support Tickets</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-bold text-primary-foreground mb-2">Support Tickets</h1> {/* MODIFIED */}
+            <p className="text-primary-foreground opacity-80"> {/* MODIFIED */}
               Track and manage your support requests
             </p>
           </div>
@@ -178,7 +181,7 @@ const SupportTickets = ({ onNavigateToView }: SupportTicketsProps) => {
       <div className="flex-1 p-6">
         <div className="space-y-4">
           {tickets.map((ticket) => (
-            <Card key={ticket.id} className="p-6 shadow-card hover:shadow-elegant transition-all duration-300">
+            <Card key={ticket.id} className="p-6 shadow-card hover:shadow-elegant transition-all duration-300 border-l-4 border-l-transparent hover:border-l-primary"> {/* MODIFIED for lively UX */}
               <div className="flex justify-between items-start mb-4">
                 <div className="flex-1">
                   <Link to={`/tickets/${ticket.id}`} className="hover:underline">

@@ -153,6 +153,8 @@ const LiveChatInterface: React.FC<LiveChatInterfaceProps> = ({ liveChatId, onNav
 
 
         const otherParticipantId = currentUserUid === sessionData.customerId ? sessionData.consultantId : sessionData.customerId;
+        
+        // --- MODIFIED LOGIC FOR DISPLAY NAME ---
         if (otherParticipantId) {
           const otherUserDoc = await getDoc(doc(db, `users/${otherParticipantId}`));
           if (otherUserDoc.exists()) {
@@ -160,9 +162,12 @@ const LiveChatInterface: React.FC<LiveChatInterfaceProps> = ({ liveChatId, onNav
           } else {
             setOtherParticipantName('Unknown Participant'); // Fallback if user doc not found
           }
+        } else if (currentUserRole === 'customer' && !sessionData.consultantId) {
+            setOtherParticipantName('Waiting for Consultant'); // Customer sees this while waiting for consultant to join
         } else {
-            setOtherParticipantName('AI Assistant'); // If no other participant (e.g. only AI), set to AI Assistant
+            setOtherParticipantName('AI Assistant'); // Default (e.g., if the other ID is truly null/non-user)
         }
+        // ---------------------------------------
 
 
         if (currentUserRole === 'admin' && sessionData.status === 'open' && !sessionData.consultantId) {
@@ -449,6 +454,18 @@ const LiveChatInterface: React.FC<LiveChatInterfaceProps> = ({ liveChatId, onNav
           </h2>
         </div>
         <div className="flex gap-2">
+          {/* NEW: Customer Close Chat Button (visible when chat is closed) */}
+          {liveChatSession.status === 'closed' && currentUserRole === 'customer' && (
+            <Button 
+                variant="default" 
+                size="sm" 
+                onClick={() => onNavigateToView('knowledge')}
+            >
+                <XCircle className="mr-2 h-4 w-4" /> Close Chat
+            </Button>
+          )}
+
+          {/* Existing Admin Buttons (visible when chat is open or in-progress) */}
           {liveChatSession.status !== 'closed' && currentUserRole === 'admin' && (
             <>
               <Button variant="outline" size="sm" onClick={handleEndChat} disabled={isLoading}>

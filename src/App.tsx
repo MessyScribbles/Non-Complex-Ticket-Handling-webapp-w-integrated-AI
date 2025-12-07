@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -12,13 +13,20 @@ import KnowledgeBaseArticle from "./pages/KnowledgeBaseArticle";
 import TicketDetail from "./pages/TicketDetail";
 import MeetingDetail from "./pages/MeetingDetail";
 import CreateAdminUserPage from "./pages/CreateAdminUserPage";
-// Removed LiveChatInterface import as it's now rendered directly by SupportPortal
-// import LiveChatInterface from "./components/LiveChatInterface";
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged, User, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 
 const queryClient = new QueryClient();
+
+// Helper to get first name
+const getFirstName = (user: User | null): string => {
+  if (!user) return 'User';
+  // Use display name, or the part of email before @, or default to 'User'
+  const name = user.displayName || user.email?.split('@')[0] || 'User';
+  // Return the first word (assumes first word is first name)
+  return name.split(' ')[0] || 'User';
+};
 
 const App = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -69,6 +77,8 @@ const App = () => {
     );
   }
 
+  const userName = getFirstName(currentUser); // Calculate name
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -82,8 +92,8 @@ const App = () => {
               path="/"
               element={
                 currentUser && userRole ? (
-                  // Ensure userType and onLogout are passed here
-                  <SupportPortal userType={userRole} onLogout={handleLogout} />
+                  // Pass userName to SupportPortal
+                  <SupportPortal userType={userRole} onLogout={handleLogout} userName={userName} />
                 ) : (
                   <Index />
                 )

@@ -11,93 +11,113 @@ import TicketManagement from "@/components/admin/TicketManagement";
 import KnowledgeBaseManagement from "@/components/admin/KnowledgeBaseManagement";
 import AnnouncementManagement from "@/components/admin/AnnouncementManagement";
 import TaskManagement from "@/components/admin/TaskManagement";
-import MeetingManagement from "@/components/admin/MeetingManagement"; // Import the new component
+import MeetingManagement from "@/components/admin/MeetingManagement";
 import PopulateFirestoreData from "@/components/PopulateFirestoreData";
 import ProfileSettings from "@/components/ProfileSettings";
-import LiveChatInterface from "@/components/LiveChatInterface"; // Make sure this import is correct
+import LiveChatInterface from "@/components/LiveChatInterface"; 
+import { Menu } from "lucide-react"; 
+import { Button } from "@/components/ui/button"; 
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"; 
 
 interface SupportPortalProps {
   userType: "customer" | "admin";
   onLogout: () => void;
+  userName: string; // ADDED
 }
 
-const SupportPortal = ({ userType, onLogout }: SupportPortalProps) => {
+const SupportPortal = ({ userType, onLogout, userName }: SupportPortalProps) => { // ADDED userName
   const [activeView, setActiveView] = useState(
     userType === "customer" ? "knowledge" : "dashboard"
   );
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
+
+  // NEW: Menu trigger element definition (passed to page components)
+  const MenuButton = (
+    <SheetTrigger asChild>
+      <Button variant="ghost" size="icon" className="text-primary-foreground">
+        <Menu className="w-6 h-6" />
+      </Button>
+    </SheetTrigger>
+  );
 
   const renderContent = () => {
-    if (activeView === "profile") {
-      return <ProfileSettings />;
-    }
-
     // Explicitly handle live-chat view with ID extraction and validation
     if (activeView.startsWith("live-chat/")) {
       const parts = activeView.split('/');
-      // Ensure that 'parts' has at least 2 elements (e.g., ["live-chat", "someId"])
       const liveChatId = parts.length > 1 ? parts[1] : null;
 
       if (liveChatId) {
-        // Only render LiveChatInterface if a valid liveChatId is extracted
         return <LiveChatInterface liveChatId={liveChatId} onNavigateToView={setActiveView} />;
       } else {
-        // Log an error or handle the case where liveChatId is missing from the path
         console.error("Live chat ID missing from activeView path:", activeView);
-        // You might want to redirect to a default view or show an error message to the user
-        // For example, redirect back to the tickets page for admin:
-        // setActiveView('tickets'); // Or a general error page
         return <p>Error: Live chat session ID missing. Please go back to the tickets list to try again.</p>;
       }
+    }
+    
+    if (activeView === "profile") {
+      return <ProfileSettings MenuButton={MenuButton} />;
     }
 
     if (userType === "customer") {
       switch (activeView) {
         case "chat":
-          return <ChatInterface onNavigateToView={setActiveView} />;
+          return <ChatInterface onNavigateToView={setActiveView} MenuButton={MenuButton} />;
         case "tickets":
-          return <SupportTickets onNavigateToView={setActiveView} />;
+          return <SupportTickets onNavigateToView={setActiveView} MenuButton={MenuButton} />;
         case "knowledge":
-          return <KnowledgeBase />;
+          return <KnowledgeBase MenuButton={MenuButton} />;
         case "meetings":
-          return <Meetings />;
+          return <Meetings MenuButton={MenuButton} />;
         case "announcements":
-          return <Announcements />;
+          return <Announcements MenuButton={MenuButton} />;
         default:
-          return <KnowledgeBase />;
+          return <KnowledgeBase MenuButton={MenuButton} />;
       }
     } else { // Admin Portal Views
       switch (activeView) {
         case "dashboard":
-          return <Dashboard />;
+          return <Dashboard MenuButton={MenuButton} />;
         case "tickets":
-          return <TicketManagement onNavigateToView={setActiveView} />;
+          return <TicketManagement onNavigateToView={setActiveView} MenuButton={MenuButton} />;
         case "knowledge":
-          return <KnowledgeBaseManagement />;
+          return <KnowledgeBaseManagement MenuButton={MenuButton} />;
         case "announcements":
-          return <AnnouncementManagement />;
+          return <AnnouncementManagement MenuButton={MenuButton} />;
         case "tasks":
-          return <TaskManagement />;
-        case "meetings": // Render MeetingManagement for admin's 'meetings' view
-          return <MeetingManagement />;
+          return <TaskManagement MenuButton={MenuButton} />;
+        case "meetings":
+          return <MeetingManagement MenuButton={MenuButton} />;
         case "populate-data":
-            return <PopulateFirestoreData />;
+            return <PopulateFirestoreData />; // PopulateData is simple and does not need header/button
         default:
-          return <Dashboard />;
+          return <Dashboard MenuButton={MenuButton} />;
       }
     }
   };
 
   return (
     <div className="flex min-h-screen w-full">
-      <Sidebar
-        userType={userType}
-        activeView={activeView}
-        onViewChange={setActiveView}
-        onLogout={onLogout}
-      />
-      <main className="flex-1 overflow-hidden">
-        {renderContent()}
-      </main>
+      
+      {/* 1. OFF-CANVAS SIDEBAR SHEET */}
+      <Sheet open={isSidebarOpen} onOpenChange={setIsSidebarOpen}>
+        <SheetContent side="left" className="p-0 w-64 border-r border-border h-screen flex flex-col shadow-card">
+          <Sidebar
+            userType={userType}
+            activeView={activeView}
+            onViewChange={(view) => {
+              setActiveView(view);
+              setIsSidebarOpen(false); // Close sidebar on navigation
+            }}
+            onLogout={onLogout}
+            userName={userName} // ADDED
+          />
+        </SheetContent>
+
+        {/* 2. MAIN CONTENT AREA - REMOVED CONFLICTING GLOBAL HEADER! */}
+        <main className="flex-1 overflow-hidden">
+          {renderContent()}
+        </main>
+      </Sheet>
     </div>
   );
 };

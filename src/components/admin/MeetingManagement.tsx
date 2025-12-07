@@ -35,7 +35,11 @@ interface Meeting {
   createdAt: any;
 }
 
-const MeetingManagement: React.FC = () => {
+interface MeetingManagementProps { // ADDED
+  MenuButton: React.ReactElement; // ADDED
+}
+
+const MeetingManagement: React.FC<MeetingManagementProps> = ({ MenuButton }) => { // MODIFIED: Receiving MenuButton
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -281,13 +285,17 @@ const MeetingManagement: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="border-b border-border p-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">Meeting Management</h1>
-            <p className="text-muted-foreground">
-              Create, edit, and manage scheduled meetings
-            </p>
+      {/* MODIFIED: Integrated MenuButton into the primary header */}
+      <div className="p-6 border-b border-border bg-primary">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {MenuButton} {/* ADDED MENU BUTTON */}
+            <div>
+              <h1 className="text-2xl font-bold text-primary-foreground mb-2">Meeting Management</h1>
+              <p className="text-primary-foreground opacity-80">
+                Create, edit, and manage scheduled meetings
+              </p>
+            </div>
           </div>
           <Button onClick={handleCreateClick} className="gap-2">
             <Plus className="w-4 h-4" /> Schedule New Meeting

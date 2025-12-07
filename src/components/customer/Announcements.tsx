@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from "@/lib/utils"; // Import cn for utility classes
 
 const APP_ID = import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
@@ -19,7 +20,9 @@ interface Announcement {
   important: boolean;
 }
 
-const Announcements = () => {
+interface AnnouncementsProps { MenuButton: React.ReactElement; } // ADDED INTERFACE
+
+const Announcements = ({ MenuButton }: AnnouncementsProps) => { // MODIFIED SIGNATURE
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -100,11 +103,17 @@ const Announcements = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="border-b border-border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Announcements</h1>
-        <p className="text-muted-foreground">
-          Stay updated with the latest news and important information
-        </p>
+      {/* Blue Header with Menu Button */}
+      <div className="p-6 border-b border-border bg-primary">
+        <div className="flex items-center gap-4">
+          {MenuButton} {/* ADDED MENU BUTTON */}
+          <div>
+            <h1 className="text-2xl font-bold text-primary-foreground mb-2">Announcements</h1>
+            <p className="text-primary-foreground opacity-80">
+              Stay updated with the latest news and important information
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 p-6">
@@ -113,9 +122,10 @@ const Announcements = () => {
             announcements.map((announcement) => (
               <Card
                 key={announcement.id}
-                className={`p-6 shadow-card hover:shadow-elegant transition-all duration-300 ${
-                  announcement.important ? "border-l-4 border-l-warning" : ""
-                }`}
+                className={cn(
+                  "p-6 shadow-card hover:shadow-elegant transition-all duration-300 border-l-4 border-l-transparent hover:border-l-primary", // MODIFIED for lively UX
+                  announcement.important ? "border-l-warning" : "" // Keep important styling
+                )}
               >
                 <div className="flex items-start gap-4">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${getTypeBgColor(announcement.type)}`}>

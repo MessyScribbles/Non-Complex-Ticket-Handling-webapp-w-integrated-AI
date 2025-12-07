@@ -12,15 +12,16 @@ interface RoleSelectionProps {
 }
 
 export default function RoleSelection({ onSelectRole }: RoleSelectionProps) {
-  return (
+return (
     <>
       {/* Logo and Title Section */}
       <div className="text-center mb-10">
         <img
           alt="Logo"
+          // **Crucial Change: Set the image source directly here**
+          src="https://i.postimg.cc/44psZbbk/Alias-Informatique.png" 
           // Adjusted width classes for a larger logo
-          className="w-40 md:w-56 mx-auto mb-4" // Increased from w-24 md:w-28
-          onError={(e) => { (e.target as HTMLImageElement).src='https://placehold.co/112x40/ffffff/000000?text=Logo'; }}
+          className="w-40 md:w-56 mx-auto mb-4"
         />
         <h1 className="text-3xl md:text-4xl font-bold text-gray-700">Support Portal</h1>
         <p className="text-md md:text-lg text-gray-500 mt-2">Welcome to your comprehensive customer support solution</p>

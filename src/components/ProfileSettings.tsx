@@ -16,10 +16,13 @@ import {
   updateUserOnlineStatus
 } from '@/lib/profile'; // Import profile management functions
 import { Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils'; // Import cn for utility classes
 
 const APP_ID = import.meta.env.VITE_FIREBASE_PROJECT_ID; // Consistent APP_ID
 
-const ProfileSettings: React.FC = () => {
+interface ProfileSettingsProps { MenuButton: React.ReactElement; } // ADDED INTERFACE
+
+const ProfileSettings: React.FC<ProfileSettingsProps> = ({ MenuButton }) => { // MODIFIED SIGNATURE
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [profileName, setProfileName] = useState('');
   const [profilePictureUrl, setProfilePictureUrl] = useState('');
@@ -158,15 +161,25 @@ const ProfileSettings: React.FC = () => {
   }
 
   return (
-    <div className="h-full flex flex-col p-6 overflow-auto">
-      <h1 className="text-2xl font-bold text-foreground mb-6">Profile Settings</h1>
-
-      <Card className="p-6 mb-6 shadow-card">
-        <CardHeader className="p-0 mb-4">
-          <CardTitle className="text-lg font-semibold">Basic Information</CardTitle>
+    <div className="h-full flex flex-col overflow-auto">
+      {/* Blue Header with Menu Button */}
+      <div className="p-6 border-b border-border bg-primary mb-6">
+        <div className="flex items-center gap-4">
+            {MenuButton} {/* MENU BUTTON INTEGRATED */}
+            <h1 className="text-2xl font-bold text-primary-foreground">Profile Settings</h1>
+        </div>
+    </div>
+    
+    {/* Content Area: Increased vertical spacing for cleaner look */}
+    <div className="px-6 space-y-8"> {/* Increased space-y from 6 to 8 */}
+      <Card className="mb-6 shadow-card">
+        {/* MODIFIED: Added padding back to CardHeader, using pb-0 for CardContent alignment */}
+        <CardHeader className="p-4 pb-0 mb-4"> 
+          <CardTitle className="text-xl font-semibold">Basic Information</CardTitle> 
           <CardDescription>Update your public profile details.</CardDescription>
         </CardHeader>
-        <CardContent className="p-0 space-y-4">
+        {/* MODIFIED: Added padding back to CardContent */}
+        <CardContent className="p-4 pt-0 space-y-6"> 
           <div className="flex items-center space-x-4">
             <Avatar className="h-20 w-20">
               <AvatarImage src={profilePictureUrl} alt={profileName || "User"} />
@@ -192,7 +205,7 @@ const ProfileSettings: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3"> 
             <Label htmlFor="profile-name">Display Name</Label>
             <div className="flex space-x-2">
               <Input
@@ -207,7 +220,7 @@ const ProfileSettings: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-3">
             <Label>Email</Label>
             <Input value={currentUser.email || ''} disabled readOnly />
             <CardDescription className="text-xs">Email cannot be changed here.</CardDescription>
@@ -215,16 +228,18 @@ const ProfileSettings: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card className="p-6 shadow-card">
-        <CardHeader className="p-0 mb-4">
-          <CardTitle className="text-lg font-semibold">Online Status</CardTitle>
+      <Card className="shadow-card">
+        {/* MODIFIED: Added padding back to CardHeader */}
+        <CardHeader className="p-4 pb-0 mb-4">
+          <CardTitle className="text-xl font-semibold">Online Status</CardTitle>
           <CardDescription>Let others know your availability.</CardDescription>
         </CardHeader>
-        <CardContent className="p-0">
+        {/* MODIFIED: Added padding back to CardContent */}
+        <CardContent className="p-4 pt-0">
           <RadioGroup
             value={onlineStatus}
             onValueChange={handleStatusChange}
-            className="flex space-x-4"
+            className={cn("flex space-x-4", isUpdatingStatus && "opacity-50")}
             disabled={isUpdatingStatus}
           >
             <div className="flex items-center space-x-2">
@@ -247,6 +262,7 @@ const ProfileSettings: React.FC = () => {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

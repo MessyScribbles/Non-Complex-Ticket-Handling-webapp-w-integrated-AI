@@ -24,7 +24,9 @@ interface Meeting {
   customerId: string;
 }
 
-const Meetings = () => {
+interface MeetingsProps { MenuButton: React.ReactElement; } // ADDED INTERFACE
+
+const Meetings = ({ MenuButton }: MeetingsProps) => { // MODIFIED SIGNATURE
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,10 +55,7 @@ const Meetings = () => {
       meetingsCollectionRef,
       where('customerId', '==', currentUserUid)
       // Note: Firestore doesn't directly support OR queries across different fields
-      // For a true OR, you'd typically fetch two separate queries and merge,
-      // or use a Cloud Function to denormalize participants into an array.
       // For simplicity here, we'll just fetch for customerId.
-      // If you need consultant-side meetings, you'd add another query.
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -115,11 +114,17 @@ const Meetings = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="border-b border-border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Meetings</h1>
-        <p className="text-muted-foreground">
-          View and manage your scheduled meetings with our consultants
-        </p>
+      {/* Blue Header with Menu Button */}
+      <div className="p-6 border-b border-border bg-primary">
+        <div className="flex items-center gap-4">
+          {MenuButton} {/* ADDED MENU BUTTON */}
+          <div>
+            <h1 className="text-2xl font-bold text-primary-foreground mb-2">Meetings</h1>
+            <p className="text-primary-foreground opacity-80">
+              View and manage your scheduled meetings with our consultants
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 p-6 space-y-8">

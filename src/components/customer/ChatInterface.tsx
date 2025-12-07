@@ -1,7 +1,7 @@
 // src/components/customer/ChatInterface.tsx
 
 import React, { useState, useRef, useEffect } from 'react'; // Import React and hooks
-import { collection, query, orderBy, onSnapshot, addDoc, doc, updateDoc, deleteDoc, getDocs, where } from 'firebase/firestore'; // Import Firestore functions
+import { collection, query, orderBy, onSnapshot, addDoc, doc, updateDoc, deleteDoc, getDocs, where, limit } from 'firebase/firestore'; // Import Firestore functions
 import { auth, db } from '@/lib/firebase'; // Import auth and db instances
 import { Button } from '@/components/ui/button'; // Import Button component
 import { Input } from '@/components/ui/input'; // Import Input component
@@ -9,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'; // Import ScrollArea c
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'; // Import Avatar components
 import { sendMessageToAI, GeminiMessage, AiResponse, AiTicketAction, createTicketConfirmed } from '@/lib/ai'; // Import AI functions and types
 import { cn } from '@/lib/utils'; // Import cn utility
-import { Bot, User, CornerDownLeft, LoaderCircle, History, Trash2, Edit, Download, XCircle, Star } from 'lucide-react'; // Import Lucide icons
+import { Bot, User, CornerDownLeft, LoaderCircle, History, Trash2, Edit, Download, XCircle, Star, MessageSquare } from 'lucide-react'; // Import Lucide icons
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,7 @@ import {
   DialogDescription
 } from '@/components/ui/dialog'; // Import Dialog components
 import { Label } from '@/components/ui/label'; // Import Label component
-import { Card } from '@/components/ui/card'; // Import Card component
+import { Card, CardHeader, CardContent, CardDescription, CardTitle } from '@/components/ui/card'; // FIXED: Imported CardHeader
 import { Textarea } from '@/components/ui/textarea'; // Import Textarea component
 import { useToast } from '@/hooks/use-toast'; // Import useToast hook
 import { onAuthStateChanged } from 'firebase/auth'; // Import onAuthStateChanged from Firebase Auth
@@ -47,9 +47,10 @@ interface ChatSession {
 
 interface ChatInterfaceProps {
   onNavigateToView: (view: string) => void; // Prop for navigating within SupportPortal
+  MenuButton: React.ReactElement; // ADDED MenuButton prop
 }
 
-export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
+export function ChatInterface({ onNavigateToView, MenuButton }: ChatInterfaceProps) { // MODIFIED signature
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -60,6 +61,9 @@ export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
   const [currentUserUid, setCurrentUserUid] = useState<string | null>(null);
   const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
   const [currentUserName, setCurrentUserName] = useState<string | null>(null);
+
+  // States for landing page/chat control
+  const [isLanding, setIsLanding] = useState(true); // NEW: State for landing page view
 
   // States for ticket creation dialog
   const [isTicketFormOpen, setIsTicketFormOpen] = useState(false);
@@ -86,53 +90,85 @@ export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
       setCurrentUserUid(user ? user.uid : null);
       setCurrentUserEmail(user ? user.email : null);
       setCurrentUserName(user ? user.displayName || user.email?.split('@')[0] || 'User' : null);
+      // Reset to landing if user logs out
+      if (!user) {
+        setIsLanding(true);
+      }
     });
     return () => unsubscribe();
   }, []);
 
-  // Effect to manage initial session or create a new one
+  // MODIFIED: Effect to manage session ONLY AFTER user clicks 'Start Chatting'.
   useEffect(() => {
     if (!currentUserUid) {
       setCurrentSessionId(null);
       setMessages([]);
       setCurrentSessionTitle('New Chat');
+      setIsLanding(true); // Always reset if no user
       return;
     }
 
-    if (!currentSessionId) {
-      const createInitialSession = async () => {
-        try {
-          const newSessionRef = await addDoc(collection(db, 'chatSessions'), {
-            userId: currentUserUid,
-            title: 'Chat ' + new Date().toLocaleString(),
-            createdAt: new Date(),
-            lastUpdated: new Date(),
-          });
-          setCurrentSessionId(newSessionRef.id);
-          setCurrentSessionTitle('Chat ' + new Date().toLocaleString());
-          setMessages([]);
-          toast({
-            title: "New chat session started!",
-            description: "Your conversation will be saved automatically.",
-            variant: "success"
-          });
-        } catch (error) {
-          console.error("Error auto-creating new session:", error);
-          toast({
-            title: "Error",
-            description: "Failed to auto-create a new chat session. Check console for permissions.",
-            variant: "destructive"
-          });
-        }
-      };
-      createInitialSession();
+    // --- Core Logic: WAIT FOR USER ACTION (isLanding = false) ---
+    if (isLanding) {
+        // If we are on the landing page, wait for the user to click 'Start Chatting'.
+        return;
     }
 
-    return () => {};
-  }, [currentUserUid, currentSessionId]);
+    // --- Logic below runs when isLanding is FALSE (user clicked 'Start Chatting') ---
+    
+    const loadLatestSessionAndCreateIfNecessary = async () => {
+        // 1. If session already exists, we are done.
+        if (currentSessionId) return;
 
+        // 2. Try to load the latest session
+        const sessionsCollectionRef = collection(db, 'chatSessions');
+        const q = query(
+            sessionsCollectionRef,
+            where('userId', '==', currentUserUid),
+            orderBy('lastUpdated', 'desc'),
+            limit(1)
+        );
+        const snapshot = await getDocs(q);
 
-  // Effect to load messages for the currently active chat session
+        if (!snapshot.empty) {
+            // Found existing session
+            const latestSession = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as ChatSession;
+            setCurrentSessionId(latestSession.id);
+            setCurrentSessionTitle(latestSession.title);
+        } else {
+            // No existing session found, create new one.
+            try {
+                const newSessionRef = await addDoc(collection(db, 'chatSessions'), {
+                    userId: currentUserUid,
+                    title: 'Chat ' + new Date().toLocaleString(),
+                    createdAt: new Date(),
+                    lastUpdated: new Date(),
+                });
+                setCurrentSessionId(newSessionRef.id);
+                setCurrentSessionTitle('Chat ' + new Date().toLocaleString());
+                setMessages([]);
+                toast({
+                    title: "New chat session started!",
+                    description: "Your conversation will be saved automatically.",
+                    variant: "success"
+                });
+            } catch (error) {
+                console.error("Error auto-creating new session:", error);
+                toast({
+                    title: "Error",
+                    description: "Failed to auto-create a new chat session. Check console for permissions.",
+                    variant: "destructive"
+                });
+                // Revert to landing state on failure
+                setIsLanding(true);
+            }
+        }
+    };
+
+    loadLatestSessionAndCreateIfNecessary();
+  }, [currentUserUid, isLanding, toast, currentSessionId]); // currentSessionId added as dependency
+
+  // Effect to load messages for the currently active chat session (no change)
   useEffect(() => {
     if (!currentSessionId) {
       setMessages([]);
@@ -197,8 +233,8 @@ export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
     if (aiResponse.type === "action" && aiResponse.action.action === "create_ticket") {
       setTicketFormSubject(aiResponse.action.title);
       setTicketFormReason(aiResponse.action.description);
-      setTicketFormName(currentUserName || currentUserEmail.split('@')[0] || '');
-      setTicketFormEmail(currentUserEmail);
+      setTicketFormName(currentUserName || currentUserEmail!.split('@')[0] || '');
+      setTicketFormEmail(currentUserEmail!);
       setIsTicketFormOpen(true);
       toast({
         title: "AI suggests creating a ticket!",
@@ -329,12 +365,6 @@ export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
         createdAt: new Date(),
       });
 
-      toast({
-        title: "Review Submitted!",
-        description: "Thank you for your feedback!",
-        variant: "success"
-      });
-
       await deleteChatSession(currentSessionId);
 
       setIsReviewDialogOpen(false);
@@ -342,6 +372,11 @@ export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
       setReviewFeedback('');
       
       onNavigateToView('knowledge');
+      toast({
+        title: "Review Submitted!",
+        description: "Thank you for your feedback!",
+        variant: "success"
+      });
     } catch (error) {
       console.error("Error submitting review or terminating chat:", error);
       toast({
@@ -367,6 +402,7 @@ export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
       setMessages([]);
       setInputValue('');
       setIsLoading(false);
+      setIsLanding(true); // Reset to landing page after deletion
     } catch (error) {
       console.error("Error deleting chat session from Firestore:", error);
       throw error;
@@ -418,26 +454,72 @@ export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
     }
   };
 
+  // --- Start of Landing Page Implementation ---
+  if (isLanding) {
+    return (
+      <div className="h-full flex flex-col">
+        {/* Blue Header with Menu Button */}
+        <div className="p-6 border-b border-border bg-primary">
+          <div className="flex items-center gap-4">
+            {MenuButton}
+            <div>
+              <h1 className="text-2xl font-bold text-primary-foreground mb-2">AI Support Chat</h1>
+              <p className="text-primary-foreground opacity-80">
+                Instant answers for your questions
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 flex items-center justify-center p-6">
+          <Card className="w-full max-w-lg text-center p-8 shadow-cyan">
+            <CardHeader className="p-0 mb-6">
+              <Bot className="w-16 h-16 text-primary mx-auto mb-4" />
+              <CardTitle className="text-3xl font-bold text-foreground mb-2">
+                Meet Alias.AI
+              </CardTitle>
+              <CardDescription className="text-lg text-muted-foreground">
+                Our Alias.AI can help you know more about us and solve your issues instantly.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Button onClick={() => setIsLanding(false)} className="w-full max-w-xs gap-2" size="xl" disabled={!currentUserUid}>
+                <MessageSquare className="w-5 h-5" /> Start Chatting
+              </Button>
+              {!currentUserUid && (
+                 <p className="text-sm text-muted-foreground mt-4">Please log in to start chatting.</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+  // --- End of Landing Page Implementation ---
+
   return (
     <div className="flex flex-col h-full bg-card">
-      <header className="p-4 border-b flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Bot className="h-5 w-5" />
-          <h2 className="text-lg font-semibold">{currentSessionTitle}</h2>
-          {currentSessionId && (
-            <Button variant="ghost" size="sm" onClick={() => { setIsEditingTitle(true); setEditedTitle(currentSessionTitle); }}>
-              <Edit className="h-4 w-4" />
-            </Button>
-          )}
+      <header className="p-4 border-b flex items-center justify-between bg-primary"> {/* MODIFIED: Added bg-primary */}
+        <div className="flex items-center gap-4"> {/* MODIFIED: Added flex wrapper for MenuButton */}
+          {MenuButton}
+          <div className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-primary-foreground" />
+            <h2 className="text-lg font-semibold text-primary-foreground">{currentSessionTitle}</h2>
+            {currentSessionId && (
+              <Button variant="ghost" size="sm" onClick={() => { setIsEditingTitle(true); setEditedTitle(currentSessionTitle); }}>
+                <Edit className="h-4 w-4 text-primary-foreground/80" />
+              </Button>
+            )}
+          </div>
         </div>
         <div className="flex gap-2">
           {currentSessionId && (
             <>
-              <Button variant="outline" size="sm" onClick={handleExportChat} disabled={messages.length === 0}>
-                <Download className="mr-2 h-4 w-4" /> Export Chat
+              <Button variant="ghost" size="sm" onClick={handleExportChat} disabled={messages.length === 0} className="text-primary-foreground hover:bg-primary/80">
+                <Download className="mr-2 h-4 w-4" /> Export
               </Button>
-              <Button variant="outline" size="sm" onClick={handleTerminateChatClick}>
-                <XCircle className="mr-2 h-4 w-4" /> Terminate Chat
+              <Button variant="ghost" size="sm" onClick={handleTerminateChatClick} className="text-primary-foreground hover:bg-primary/80">
+                <XCircle className="mr-2 h-4 w-4" /> Terminate
               </Button>
             </>
           )}
@@ -455,16 +537,16 @@ export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
               )}
             >
               {message.sender === 'ai' && (
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-8 w-8 bg-primary text-primary-foreground">
                   <AvatarFallback><Bot size={18} /></AvatarFallback>
                 </Avatar>
               )}
               <div
                 className={cn(
-                  'max-w-md rounded-lg p-3 text-sm',
+                  'max-w-md rounded-xl p-3 text-sm shadow-md', // MODIFIED: Modern bubble style
                   message.sender === 'user'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted'
+                    ? 'bg-primary text-primary-foreground rounded-br-none'
+                    : 'bg-muted rounded-tl-none'
                 )}
               >
                 {message.text}
@@ -478,8 +560,10 @@ export function ChatInterface({ onNavigateToView }: ChatInterfaceProps) {
           ))}
           {isLoading && (
             <div className="flex items-start gap-3 justify-start">
-               <LoaderCircle className="h-4 w-4 animate-spin" />
-               <span className="text-sm text-muted-foreground">AI is thinking...</span>
+              <Avatar className="h-8 w-8 bg-primary text-primary-foreground">
+                  <AvatarFallback><Bot size={18} /></AvatarFallback>
+              </Avatar>
+               <LoaderCircle className="h-4 w-4 animate-spin text-muted-foreground mt-3" />
             </div>
           )}
         </div>

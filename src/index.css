@@ -9,56 +9,58 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 255 255 255 1; /* white */
-    --foreground: 2 8 23 1; /* dark blue-gray */
+    /* Base Colors: Using a pure white background and deep blue foreground */
+    --background: 0 0% 100%; /* Pure white */
+    --foreground: 210 40% 10%; /* Deep Blue-Gray */
 
-    --card: 255 255 255 1; /* white */
-    --card-foreground: 2 8 23 1; /* dark blue-gray */
+    --card: 0 0% 100%; /* Pure white */
+    --card-foreground: 210 40% 10%; 
 
-    --popover: 255 255 255 1; /* white */
-    --popover-foreground: 2 8 23 1; /* dark blue-gray */
+    --popover: 0 0% 100%; /* Pure white */
+    --popover-foreground: 210 40% 10%;
 
-    --primary: 6 182 212 1; /* cyan-500 */
-    --primary-foreground: 255 255 255 1; /* white */
+    /* Primary Color: Solid Blue (H=210) */
+    --primary: 210 90% 50%; /* Medium Blue */
+    --primary-foreground: 0 0% 100%; /* Pure white */
 
-    --secondary: 236 254 255 1; /* cyan-50 */
-    --secondary-foreground: 8 145 178 1; /* cyan-600 */
+    /* Secondary Color: Very light blue shade */
+    --secondary: 210 90% 95%; /* Very light blue */
+    --secondary-foreground: 210 90% 20%; /* Dark Blue for text */
 
-    --muted: 240 253 255 1; /* cyan-25 */
-    --muted-foreground: 75 85 99 1; /* gray-600 */
+    /* Muted/Accent: Even lighter blue for subtle background/hover */
+    --muted: 210 90% 98%; /* Almost white light blue */
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 236 254 255 1; /* cyan-50 */
-    --accent-foreground: 6 182 212 1; /* cyan-500 */
+    --accent: 210 90% 90%; /* Light Blue for hover contrast */
+    --accent-foreground: 210 90% 50%; /* Primary color */
 
-    --destructive: 239 68 68 1; /* red-500 */
-    --destructive-foreground: 255 255 255 1; /* white */
+    --destructive: 0 62.8% 30.6%; /* Standard red */
+    --destructive-foreground: 0 0% 100%; 
 
-    --border: 207 250 254 1; /* cyan-100 */
-    --input: 207 250 254 1; /* cyan-100 */
-    --ring: 6 182 212 1; /* cyan-500 */
+    --border: 210 50% 85%; /* Soft blue-gray border */
+    --input: 210 50% 85%;
+    --ring: 210 90% 50%; /* Primary color ring */
 
-    /* Support Portal Specific Colors */
-    --primary-glow: 34 211 238 1; /* cyan-400 */
-    --success: 34 197 94 1; /* green-500 */
-    --success-foreground: 255 255 255 1;
-    --warning: 251 191 36 1; /* amber-400 */
-    --warning-foreground: 15 23 42 1;
-    --info: 14 165 233 1; /* sky-500 */
-    --info-foreground: 255 255 255 1;
+    /* Support Portal Specific Colors - Adjusted to blue/light blue shades */
+    --primary-glow: 210 90% 70%; /* Lighter primary for glow */
+    --success: 142.1 76.2% 36.3%; /* Standard green for success */
+    --success-foreground: 0 0% 100%;
+    --warning: 38.8 82.4% 50%; /* Standard amber for warning */
+    --warning-foreground: 210 40% 10%;
+    --info: 210 90% 50%; /* Same as primary for info badge */
+    --info-foreground: 0 0% 100%;
 
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
     --gradient-card: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--accent)) 100%);
-    --gradient-cyan: linear-gradient(135deg, hsl(6 182 212 / 1), hsl(34 211 238 / 1));
+    --gradient-cyan: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow))); 
 
     /* Shadows */
-    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.15);
-    --shadow-card: 0 4px 20px -2px hsl(var(--primary) / 0.1);
-    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.2);
-    --shadow-cyan: 0 20px 40px -12px hsl(6 182 212 / 0.25);
-    /* Removed --shadow-glow-cyan as we're using direct Tailwind classes */
-
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    --shadow-card: 0 4px 20px -2px hsl(var(--primary) / 0.2);
+    --shadow-glow: 0 0 40px hsl(var(--primary-glow) / 0.4);
+    --shadow-cyan: 0 20px 40px -12px hsl(var(--primary) / 0.4);
 
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -68,23 +70,19 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 236 254 255 1; /* cyan-50 */
-    --sidebar-accent-foreground: 6 182 212 1; /* cyan-500 */
-
-    --sidebar-border: 207 250 254 1; /* cyan-100 */
-
-    --sidebar-ring: 6 182 212 1; /* cyan-500 */
+    /* Sidebar - High contrast blue shades */
+    --sidebar-background: 0 0% 100%; /* White */
+    --sidebar-foreground: 210 40% 10%; /* Dark text */
+    --sidebar-primary: 210 90% 50%; /* Primary button */
+    --sidebar-primary-foreground: 0 0% 100%; /* White text on primary */
+    --sidebar-accent: 210 90% 90%; /* Light Blue for hover */
+    --sidebar-accent-foreground: 210 90% 50%; /* Primary for hover text */
+    --sidebar-border: 210 50% 85%; /* Soft blue border */
+    --sidebar-ring: 210 90% 50%; /* Primary ring */
   }
 
   .dark {
+    /* Dark mode settings remain mostly default, but adjust primary hue if necessary */
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
@@ -94,7 +92,7 @@ All colors MUST be HSL.
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
+    --primary: 210 40% 98%; /* White primary button in dark mode */
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;

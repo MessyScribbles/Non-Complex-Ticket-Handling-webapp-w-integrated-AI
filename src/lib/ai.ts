@@ -21,7 +21,8 @@ export type AiResponse = {
 };
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+// FIX: Using the correct, stable model name for the REST API endpoint
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`; 
 const APP_ID = import.meta.env.VITE_FIREBASE_PROJECT_ID;
 
 export const createTicketConfirmed = async (
@@ -73,8 +74,10 @@ export const sendMessageToAI = async (
   }
 
   try {
-    // ENHANCED PROMPT: Including company overview and strict instructions
-    const prompt = `You are an AI assistant. Your primary function is to provide information and support as requested.
+    // ENHANCED PROMPT: Strict topical constraint
+    const prompt = `You are the ALIAS Informatique Support AI Assistant. Your knowledge is strictly limited to ALIAS company services, products, policies, and providing technical support.
+
+    If the user asks about any topic unrelated to ALIAS (e.g., general knowledge, current events, politics), you MUST politely refuse and state that you can only assist with ALIAS-related inquiries.
 
     You SHOULD ONLY respond with a JSON object if the user EXPLICITLY and DIRECTLY asks to "create a ticket", "open a ticket", "escalate this issue", or "I need more help with this". If the user's request does not contain these explicit phrases, you MUST respond naturally and helpfully in plain text. Do NOT wrap the JSON object in markdown code blocks (e.g., \`\`\`json ... \`\`\`). Provide the raw JSON string directly.
     When generating a JSON response for a ticket creation, the JSON object MUST adhere to this exact structure:

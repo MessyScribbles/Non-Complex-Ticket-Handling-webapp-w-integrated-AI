@@ -35,7 +35,11 @@ interface Article {
   link?: string;
 }
 
-const KnowledgeBaseManagement: React.FC = () => {
+interface KnowledgeBaseManagementProps { // ADDED
+  MenuButton: React.ReactElement; // ADDED
+}
+
+const KnowledgeBaseManagement: React.FC<KnowledgeBaseManagementProps> = ({ MenuButton }) => { // MODIFIED: Receiving MenuButton
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -270,15 +274,17 @@ const KnowledgeBaseManagement: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="border-b border-border p-6">
-        <div className="flex justify-between items-center">
+      {/* MODIFIED: Integrated MenuButton and updated title */}
+      <div className="p-6 border-b border-border bg-primary">
+        <div className="flex items-center gap-4">
+          {MenuButton} {/* ADDED MENU BUTTON */}
           <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">Knowledge Base Management</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-bold text-primary-foreground mb-2">Alias Base Management</h1> {/* MODIFIED TITLE */}
+            <p className="text-primary-foreground opacity-80">
               Create, edit, and manage articles for the knowledge base
             </p>
           </div>
-          <Button onClick={handleCreateClick} className="gap-2">
+          <Button onClick={handleCreateClick} className="gap-2 ml-auto"> {/* Moved Button to the right */}
             <Plus className="w-4 h-4" /> New Article
           </Button>
         </div>

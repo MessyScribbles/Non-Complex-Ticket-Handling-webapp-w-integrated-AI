@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 // Import all necessary Lucide icons, including Activity
-import { DollarSign, Users, CreditCard, Activity, Ticket, Calendar as CalendarIcon, Megaphone, BookOpen, CheckCircle, Clock } from "lucide-react"; // <-- Activity is now explicitly here
+import { DollarSign, Users, CreditCard, Activity, Ticket, Calendar as CalendarIcon, Megaphone, BookOpen, CheckCircle, Clock } from "lucide-react"; 
 import { collection, query, orderBy, onSnapshot, where, getDocs, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -26,7 +26,11 @@ interface MeetingData {
   status: "upcoming" | "completed" | "cancelled";
 }
 
-const Dashboard = () => {
+interface DashboardProps { // ADDED
+    MenuButton: React.ReactElement; // ADDED
+}
+
+const Dashboard = ({ MenuButton }: DashboardProps) => { // MODIFIED SIGNATURE
   const [totalTickets, setTotalTickets] = useState(0);
   const [pendingTickets, setPendingTickets] = useState(0);
   const [resolvedTicketsToday, setResolvedTicketsToday] = useState(0);
@@ -178,6 +182,23 @@ const Dashboard = () => {
     }
   };
 
+  // NEW: Modernized Stat Card Component
+  const StatCard: React.FC<{ title: string; value: number; subtext: string; icon: React.ReactElement }> = ({ title, value, subtext, icon }) => (
+    <Card className="shadow-card hover:shadow-lg transition-shadow duration-300">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+          {icon}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-3xl font-bold text-foreground">{value}</div>
+        <p className="text-xs text-muted-foreground mt-1">{subtext}</p>
+      </CardContent>
+    </Card>
+  );
+
+
   if (loadingStats) {
     return (
       <div className="p-6 text-center text-muted-foreground">Loading dashboard data...</div>
@@ -192,84 +213,62 @@ const Dashboard = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="border-b border-border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-        <p className="text-muted-foreground">Overview of support operations</p>
+      {/* Updated Header - Integrated MenuButton */}
+      <div className="p-6 border-b border-border bg-primary">
+        <div className="flex items-center gap-4">
+          {MenuButton} {/* MENU BUTTON INTEGRATED */}
+          <div>
+            <h1 className="text-2xl font-bold text-primary-foreground">Dashboard</h1>
+            <p className="text-primary-foreground opacity-80">A summary of key performance indicators and system health.</p>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 p-6 space-y-8 overflow-auto">
-        {/* Statistics Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Tickets</CardTitle>
-              <Ticket className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalTickets}</div>
-              <p className="text-xs text-muted-foreground">All time</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Tickets</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{pendingTickets}</div>
-              <p className="text-xs text-muted-foreground">Awaiting action</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Resolved Today</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{resolvedTicketsToday}</div>
-              <p className="text-xs text-muted-foreground">Tickets resolved today</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Meetings</CardTitle>
-              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalMeetings}</div>
-              <p className="text-xs text-muted-foreground">Scheduled meetings</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Upcoming Meetings</CardTitle>
-              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{upcomingMeetings}</div>
-              <p className="text-xs text-muted-foreground">In the near future</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Announcements</CardTitle>
-              <Megaphone className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalAnnouncements}</div>
-              <p className="text-xs text-muted-foreground">Total published</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">KB Articles</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalKnowledgeArticles}</div>
-              <p className="text-xs text-muted-foreground">Total published</p>
-            </CardContent>
-          </Card>
+        {/* Statistics Cards - Using the new StatCard component for cleaner look */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <StatCard 
+            title="Total Tickets" 
+            value={totalTickets} 
+            subtext="All time" 
+            icon={<Ticket className="h-4 w-4" />} 
+          />
+          <StatCard 
+            title="Pending Tickets" 
+            value={pendingTickets} 
+            subtext="Awaiting action" 
+            icon={<Clock className="h-4 w-4" />} 
+          />
+          <StatCard 
+            title="Resolved Today" 
+            value={resolvedTicketsToday} 
+            subtext="Tickets resolved today" 
+            icon={<CheckCircle className="h-4 w-4" />} 
+          />
+          <StatCard 
+            title="Total Meetings" 
+            value={totalMeetings} 
+            subtext="Scheduled meetings" 
+            icon={<CalendarIcon className="h-4 w-4" />} 
+          />
+          <StatCard 
+            title="Upcoming Meetings" 
+            value={upcomingMeetings} 
+            subtext="In the near future" 
+            icon={<CalendarIcon className="h-4 w-4" />} 
+          />
+          <StatCard 
+            title="Announcements" 
+            value={totalAnnouncements} 
+            subtext="Total published" 
+            icon={<Megaphone className="h-4 w-4" />} 
+          />
+          <StatCard 
+            title="KB Articles" 
+            value={totalKnowledgeArticles} 
+            subtext="Total published" 
+            icon={<BookOpen className="h-4 w-4" />} 
+          />
         </div>
 
         {/* Recent Tickets Table */}

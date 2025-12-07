@@ -32,9 +32,10 @@ interface Ticket {
 
 interface TicketManagementProps {
   onNavigateToView: (view: string) => void;
+  MenuButton: React.ReactElement; // ADDED: MenuButton prop for sidebar access
 }
 
-const TicketManagement = ({ onNavigateToView }: TicketManagementProps) => {
+const TicketManagement = ({ onNavigateToView, MenuButton }: TicketManagementProps) => { // MODIFIED: Receiving MenuButton
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -268,11 +269,17 @@ const TicketManagement = ({ onNavigateToView }: TicketManagementProps) => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="border-b border-border p-6">
-        <h1 className="text-2xl font-bold text-foreground mb-2">Ticket Management</h1>
-        <p className="text-muted-foreground">
-          View and manage all customer support tickets
-        </p>
+      {/* MODIFIED: Integrated MenuButton into the primary header */}
+      <div className="p-6 border-b border-border bg-primary">
+        <div className="flex items-center gap-4">
+          {MenuButton} {/* ADDED MENU BUTTON */}
+          <div>
+            <h1 className="text-2xl font-bold text-primary-foreground mb-2">Ticket Management</h1>
+            <p className="text-primary-foreground opacity-80">
+              View and manage all customer support tickets
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 p-6 overflow-auto">

@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Edit, Trash2, Loader2, Calendar as CalendarIcon } from 'lucide-react'; // Removed Checkbox from here
+import { Plus, Edit, Trash2, Loader2, Calendar as CalendarIcon, ListChecks } from 'lucide-react'; // Added ListChecks icon
 import { Checkbox as UICheckbox } from '@/components/ui/checkbox'; // Import Checkbox from your UI components
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
@@ -32,7 +32,11 @@ interface Task {
   updatedAt: any;
 }
 
-const TaskManagement: React.FC = () => {
+interface TaskManagementProps { // ADDED
+  MenuButton: React.ReactElement; // ADDED
+}
+
+const TaskManagement: React.FC<TaskManagementProps> = ({ MenuButton }) => { // MODIFIED: Receiving MenuButton
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -237,13 +241,17 @@ const TaskManagement: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="border-b border-border p-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground mb-2">Task Management</h1>
-            <p className="text-muted-foreground">
-              Create, manage, and track your personal tasks
-            </p>
+      {/* MODIFIED: Integrated MenuButton into the primary header */}
+      <div className="p-6 border-b border-border bg-primary">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {MenuButton} {/* ADDED MENU BUTTON */}
+            <div>
+              <h1 className="text-2xl font-bold text-primary-foreground mb-2">Task Management</h1>
+              <p className="text-primary-foreground opacity-80">
+                Create, manage, and track your personal tasks
+              </p>
+            </div>
           </div>
           <Button onClick={handleCreateClick} className="gap-2">
             <Plus className="w-4 h-4" /> New Task
@@ -292,6 +300,7 @@ const TaskManagement: React.FC = () => {
           </Card>
         ) : (
           <div className="text-center py-12">
+            <ListChecks className="w-12 h-12 text-muted-foreground mx-auto mb-4" /> {/* Changed icon for task list */}
             <h3 className="text-lg font-semibold text-foreground mb-2">No tasks found</h3>
             <p className="text-muted-foreground">Click "New Task" to add your first task.</p>
           </div>
